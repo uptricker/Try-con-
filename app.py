@@ -2,13 +2,14 @@ from flask import Flask, request, render_template_string, flash, redirect, url_f
 from instagrapi import Client
 import time
 import threading
+import os
 
-# Flask app setup
+# Flask setup
 app = Flask(__name__)
 app.secret_key = "your_secret_key"
 stop_flag = False
 
-# HTML with background + 3D animated buttons
+# HTML UI (3D style + background)
 HTML_TEMPLATE = '''
 <!DOCTYPE html>
 <html lang="en">
@@ -126,15 +127,34 @@ HTML_TEMPLATE = '''
 </html>
 '''
 
-# Send messages (only inbox supported)
+# Sending logic with challenge + session handling
 def send_messages(username, password, target_ids, messages, delay):
     global stop_flag
     stop_flag = False
     try:
         cl = Client()
-        print("[INFO] Logging in...")
-        cl.login(username, password)
-        print("[SUCCESS] Logged in.")
+        cl.delay_range = [1, 3]
+
+        # Load session if exists
+        if os.path.exists("session.json"):
+            cl.load_settings("session.json")
+
+        try:
+            cl.login(username, password)
+            cl.dump_settings("session.json")
+        except Exception as e:
+            print("[LOGIN WARNING]", e)
+            if "challenge" in str(e).lower():
+                try:
+                    cl.challenge_resolve_auto()
+                    cl.login(username, password)
+                    cl.dump_settings("session.json")
+                except Exception as ce:
+                    print("[ERROR] Challenge Failed:", ce)
+                    return
+            else:
+                print("[LOGIN FAILED]:", e)
+                return
 
         targets = [x.strip() for x in target_ids.split(",") if x.strip()]
         for target in targets:
@@ -150,7 +170,6 @@ def send_messages(username, password, target_ids, messages, delay):
     except Exception as e:
         print("[ERROR]", e)
 
-# Flask route
 @app.route("/", methods=["GET", "POST"])
 def index():
     global stop_flag
@@ -181,7 +200,7 @@ def stop():
     flash("⛔ Sending stopped.")
     return redirect(url_for("index"))
 
-# Run
+# Run server
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000, debug=True)
-    
+  
