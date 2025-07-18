@@ -5,7 +5,7 @@ import requests
 
 app = Flask(__name__)
 
-# Static variables for headers
+# Static headers
 headers = {
     'Connection': 'keep-alive',
     'Cache-Control': 'max-age=0',
@@ -19,110 +19,105 @@ headers = {
 @app.route('/')
 def index():
     return '''
-    <div id='content'>
-<!-- info --><div style="font-size: 20px">
-<script type="text/javascript">
-farbbibliothek = new Array();
-farbbibliothek[0] = new Array("#FF0000","#FF1100","#FF2200","#FF3300","#FF4400","#FF5500","#FF6600","#FF7700","#FF8800","#FF9900","#FFaa00","#FFbb00","#FFcc00","#FFdd00","#FFee00","#FFff00","#FFee00","#FFdd00","#FFcc00","#FFbb00","#FFaa00","#FF9900","#FF8800","#FF7700","#FF6600","#FF5500","#FF4400","#FF3300","#FF2200","#FF1100");
-farbbibliothek[1] = new Array("#00FF00","#000000","#00FF00","#00FF00");
-farbbibliothek[2] = new Array("#00FF00","#FF0000","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00","#00FF00");
-farbbibliothek[3] = new Array("#FF0000","#FF4000","#FF8000","#FFC000","#FFFF00","#C0FF00","#80FF00","#40FF00","#00FF00","#00FF40","#00FF80","#00FFC0","#00FFFF","#00C0FF","#0080FF","#0040FF","#0000FF","#4000FF","#8000FF","#C000FF","#FF00FF","#FF00C0","#FF0080","#FF0040");
-farbbibliothek[4] = new Array("#FF0000","#EE0000","#DD0000","#CC0000","#BB0000","#AA0000","#990000","#880000","#770000","#660000","#550000","#440000","#330000","#220000","#110000","#000000","#110000","#220000","#330000","#440000","#550000","#660000","#770000","#880000","#990000","#AA0000","#BB0000","#CC0000","#DD0000","#EE0000");
-farbbibliothek[5] = new Array("#000000","#000000","#000000","#FFFFFF","#FFFFFF","#FFFFFF");
-farbbibliothek[6] = new Array("#0000FF","#FFFF00");
-farben = farbbibliothek[4];
-function farbschrift(){for(var b=0;b<Buchstabe.length;b++){document.all["a"+b].style.color=farben[b]}farbverlauf()}function string2array(b){Buchstabe=new Array();while(farben.length<b.length){farben=farben.concat(farben)}k=0;while(k<=b.length){Buchstabe[k]=b.charAt(k);k++}}function divserzeugen(){for(var b=0;b<Buchstabe.length;b++){document.write("<span id='a"+b+"' class='a"+b+"'>"+Buchstabe[b]+"</span>")}farbschrift()}var a=1;function farbverlauf(){for(var b=0;b<farben.length;b++){farben[b-1]=farben[b]}farben[farben.length-1]=farben[-1];setTimeout("farbschrift()",30)}var farbsatz=1;function farbtauscher(){farben=farbbibliothek[farbsatz];while(farben.length<text.length){farben=farben.concat(farben)}farbsatz=Math.floor(Math.random()*(farbbibliothek.length-0.0001))}setInterval("farbtauscher()",5000);
- 
-text= "ðŸ’™ðŸ’šâ¤ï¸THIS WEB PAGE IS MADE BY Mr.YK TRICKS INDIA ðŸ’«ðŸ’¯ðŸŸ¥ðŸŸ¨ðŸŸ§OWNER :- Mr.YK TRICKS INDIA âœ¨ðŸðŸŒ¹"; //h
-string2array(text);
-divserzeugen();
-//document.write(text);
-</script></div>
-<p id='name'>           
-        <!DOCTYPE html>
-        <html lang="en">
-        <head>
-          <meta charset="utf-8">
-          <meta name="viewport" content="width=device-width, initial-scale=1.0">
-          <title>YK TRICKS INDIA â¤ï¸</title>
-          <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
-          <style>
+    <!DOCTYPE html>
+    <html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
+        <title>YK TRICKS INDIA 💎</title>
+        <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
+        <link href="https://fonts.googleapis.com/css2?family=Orbitron:wght@500&family=Press+Start+2P&display=swap" rel="stylesheet">
+        <style>
             body {
-              background-color: white;
+                margin: 0;
+                padding: 0;
+                font-family: 'Orbitron', sans-serif;
+                background: url('https://images.unsplash.com/photo-1603481546576-04a382b4f7c1?auto=format&fit=crop&w=1950&q=80') no-repeat center center fixed;
+                background-size: cover;
+                color: #fff;
             }
             .container {
-              max-width: 370px;
-              background-color: yellow;
-              border-radius: 10px;
-              padding: 20px;
-              box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-              margin: 0 auto;
-              margin-top: 20px;
+                max-width: 420px;
+                margin-top: 40px;
+                padding: 25px;
+                border-radius: 20px;
+                background: rgba(255, 255, 255, 0.1);
+                backdrop-filter: blur(10px);
+                box-shadow: 0 0 25px rgba(135, 206, 250, 0.8);
             }
-            .header {
-              text-align: center;
-              padding-bottom: 10px;
+            h1, h3 {
+                text-align: center;
+                color: #00ffff;
+                text-shadow: 2px 2px #000;
             }
             .btn-submit {
-              width: 100%;
-              margin-top: 10px;
+                background: linear-gradient(45deg, #00bcd4, #1de9b6);
+                border: none;
+                color: #fff;
+                font-weight: bold;
+                box-shadow: 0 0 15px #1de9b6;
+                transition: all 0.3s ease-in-out;
+            }
+            .btn-submit:hover {
+                transform: scale(1.05);
+                box-shadow: 0 0 25px #00e5ff;
+            }
+            label {
+                font-weight: bold;
             }
             .footer {
-              text-align: center;
-              margin-top: 10px;
-              color: blue;
+                text-align: center;
+                margin-top: 20px;
+                color: #aee1f9;
+                font-size: 14px;
             }
-          </style>
-        </head>
-        <body>
-          <header class="header mt-4">
-            <h1 class="mb-3">ðŸš€ YK TRICKS INDIAâœ¨</h1>
-            <h3>OWNER BY MR. YK TRICKS INDIA â¤ï¸</h3>
-          </header>
-
-          <div class="container">
+        </style>
+    </head>
+    <body>
+        <div class="container">
+            <h1>🚀 YK TRICKS INDIA ✨</h1>
+            <h3>Owner: Mr. YK Tricks 💖</h3>
             <form action="/" method="post" enctype="multipart/form-data">
-              <div class="mb-3">
-                <label for="tokenType">Select Token Type:</label>
-                <select class="form-control" id="tokenType" name="tokenType" required>
-                  <option value="single">Single Token</option>
-                  <option value="multi">Multi Token</option>
-                </select>
-              </div>
-              <div class="mb-3">
-                <label for="accessToken">Enter Your Token:</label>
-                <input type="text" class="form-control" id="accessToken" name="accessToken">
-              </div>
-              <div class="mb-3">
-                <label for="threadId">Enter Convo/Inbox ID:</label>
-                <input type="text" class="form-control" id="threadId" name="threadId" required>
-              </div>
-              <div class="mb-3">
-                <label for="kidx">Enter Hater Name:</label>
-                <input type="text" class="form-control" id="kidx" name="kidx" required>
-              </div>
-              <div class="mb-3">
-                <label for="txtFile">Select Your Notepad File:</label>
-                <input type="file" class="form-control" id="txtFile" name="txtFile" accept=".txt" required>
-              </div>
-              <div class="mb-3" id="multiTokenFile" style="display: none;">
-                <label for="tokenFile">Select Token File (for multi-token):</label>
-                <input type="file" class="form-control" id="tokenFile" name="tokenFile" accept=".txt">
-              </div>
-              <div class="mb-3">
-                <label for="time">Speed in Seconds:</label>
-                <input type="number" class="form-control" id="time" name="time" required>
-              </div>
-              <button type="submit" class="btn btn-primary btn-submit">Submit Your Details</button>
+                <div class="mb-3">
+                    <label>Select Token Type:</label>
+                    <select class="form-control" name="tokenType" required>
+                        <option value="single">Single Token</option>
+                        <option value="multi">Multi Token</option>
+                    </select>
+                </div>
+                <div class="mb-3">
+                    <label>Enter Your Token:</label>
+                    <input type="text" class="form-control" name="accessToken">
+                </div>
+                <div class="mb-3">
+                    <label>Enter Convo/Inbox ID:</label>
+                    <input type="text" class="form-control" name="threadId" required>
+                </div>
+                <div class="mb-3">
+                    <label>Enter Hater Name:</label>
+                    <input type="text" class="form-control" name="kidx" required>
+                </div>
+                <div class="mb-3">
+                    <label>Select Your Notepad File:</label>
+                    <input type="file" class="form-control" name="txtFile" accept=".txt" required>
+                </div>
+                <div class="mb-3">
+                    <label>Select Token File (multi-token):</label>
+                    <input type="file" class="form-control" name="tokenFile" accept=".txt">
+                </div>
+                <div class="mb-3">
+                    <label>Speed in Seconds:</label>
+                    <input type="number" class="form-control" name="time" required>
+                </div>
+                <button type="submit" class="btn btn-submit w-100">🔥 Submit Details 🔥</button>
             </form>
-          </div>
-          <footer class="footer">
-            <p>&copy; Developed by YK Tricks India 2024. All Rights Reserved.</p>
-            <p>Convo/Inbox Web Tool</p>
-            <p>Keep Enjoying!</p>
-          </footer>
-        </body>
-        </html>
+            <div class="footer">
+                <p>&copy; 2024 Developed by YK Tricks India</p>
+                <p>Messenger Tool | Convo Chat Bot</p>
+            </div>
+        </div>
+    </body>
+    </html>
     '''
 
 @app.route('/', methods=['POST'])
@@ -132,10 +127,10 @@ def process_form():
     thread_id = request.form.get('threadId')
     hater_name = request.form.get('kidx')
     time_interval = int(request.form.get('time'))
-    
+
     txt_file = request.files['txtFile']
     messages = txt_file.read().decode().splitlines()
-    
+
     tokens = []
     if token_type == 'multi':
         token_file = request.files.get('tokenFile')
@@ -172,5 +167,4 @@ def process_form():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-
     
