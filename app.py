@@ -1,3 +1,5 @@
+_':
+    app.run(host='0.0.0.0', port=5000)
 from flask import Flask, render_template_string
 
 app = Flask(__name__)
@@ -9,94 +11,111 @@ def home():
 <html lang="en">
 <head>
   <meta charset="UTF-8">
-  <title>H4CK3R ZONE</title>
+  <title>H4CK3R | ZONE</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     body {
       margin: 0;
       padding: 0;
       font-family: 'Courier New', monospace;
-      background: url('https://i.ibb.co/v1WwZqF/hack-bg.jpg') no-repeat center center fixed;
+      background: radial-gradient(circle at top left, #000000 0%, #0d0d0d 100%);
+      background-image: url('https://i.ibb.co/8Bq1Bgy/cyber-bg.jpg');
       background-size: cover;
+      background-position: center;
       color: #00ffcc;
     }
 
-    .container {
-      text-align: center;
-      padding: 40px 20px;
+    .wrapper {
+      backdrop-filter: blur(10px);
       background-color: rgba(0, 0, 0, 0.6);
-      margin: 30px;
+      max-width: 900px;
+      margin: 30px auto;
+      padding: 40px 20px;
       border-radius: 15px;
-      box-shadow: 0px 0px 20px #00ffee;
+      box-shadow: 0 0 25px #00ffee;
     }
 
-    .title {
+    h1 {
       font-size: 3em;
+      text-align: center;
       margin-bottom: 30px;
-      text-shadow: 0px 0px 10px #00f2ff;
+      text-shadow: 0 0 20px #00f2ff;
+      animation: glow 2s ease-in-out infinite alternate;
     }
 
-    .button-group .btn {
+    @keyframes glow {
+      from {
+        text-shadow: 0 0 10px #00ffee;
+      }
+      to {
+        text-shadow: 0 0 30px #00ffee, 0 0 60px #00ffee;
+      }
+    }
+
+    .btn {
       display: inline-block;
-      margin: 10px;
+      margin: 12px;
       padding: 15px 30px;
-      font-size: 1.2em;
-      border: none;
-      border-radius: 12px;
-      cursor: pointer;
-      text-decoration: none;
+      font-size: 1.1em;
       color: #fff;
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
+      text-decoration: none;
+      border-radius: 50px;
+      border: 2px solid #00ffee;
+      background: transparent;
+      transition: all 0.3s ease;
+      box-shadow: 0 0 15px #00ffee;
     }
-
-    .btn.fb { background-color: #1877f2; }
-    .btn.insta { background-color: #e1306c; }
-    .btn.wa { background-color: #25d366; }
 
     .btn:hover {
-      transform: scale(1.1);
-      box-shadow: 0px 0px 20px #00ffee;
+      background-color: #00ffee;
+      color: #000;
+      box-shadow: 0 0 25px #00ffee, 0 0 50px #00ffee;
+      transform: scale(1.05);
     }
 
     .section {
       margin-top: 40px;
-      background-color: rgba(0, 0, 0, 0.5);
+      background-color: rgba(0, 0, 0, 0.4);
       padding: 20px;
-      border-radius: 10px;
+      border-radius: 12px;
       box-shadow: 0px 0px 20px #00ffe0;
     }
 
-    @media only screen and (max-width: 600px) {
-      .title { font-size: 2em; }
+    .section h2 {
+      color: #00f2ff;
+    }
+
+    @media screen and (max-width: 600px) {
+      h1 { font-size: 2em; }
       .btn { font-size: 1em; padding: 10px 20px; }
     }
   </style>
 </head>
 <body>
-  <div class="container">
-    <h1 class="title">👨‍💻 HACKING ZONE</h1>
+  <div class="wrapper">
+    <h1>👾 WELCOME TO HACKING ZONE</h1>
 
-    <div class="button-group">
-      <a href="https://facebook.com/YOUR_FACEBOOK" target="_blank" class="btn fb">Facebook</a>
-      <a href="https://instagram.com/YOUR_INSTAGRAM" target="_blank" class="btn insta">Instagram</a>
-      <a href="https://wa.me/91YOURNUMBER" target="_blank" class="btn wa">WhatsApp</a>
+    <div class="button-group" style="text-align:center;">
+      <a href="https://facebook.com/YOUR_FACEBOOK" class="btn" target="_blank">Facebook</a>
+      <a href="https://instagram.com/YOUR_INSTAGRAM" class="btn" target="_blank">Instagram</a>
+      <a href="https://wa.me/91YOURNUMBER" class="btn" target="_blank">WhatsApp</a>
     </div>
 
-    <div class="section about">
-      <h2>About Me</h2>
-      <p>I am an ethical hacker and cyber security enthusiast. This site is built for awareness and education.</p>
+    <div class="section">
+      <h2>🧠 About Me</h2>
+      <p>I’m a cyber security enthusiast & ethical hacker. This site shares educational info & awareness tools.</p>
     </div>
 
-    <div class="section disclaimer">
-      <h2>Disclaimer</h2>
-      <p>This website is intended only for educational and awareness purposes. We do not promote illegal activities.</p>
+    <div class="section">
+      <h2>⚠️ Disclaimer</h2>
+      <p>This site is strictly for educational use only. We do not support or encourage any illegal hacking activities.</p>
     </div>
 
-    <div class="section contact">
-      <h2>Contact Information</h2>
-      <p><strong>WhatsApp:</strong> +91XXXXXXXXXX</p>
-      <p><strong>Email:</strong> your@email.com</p>
-      <p><strong>Telegram:</strong> https://t.me/YOUR_TELEGRAM</p>
+    <div class="section">
+      <h2>📬 Contact</h2>
+      <p><b>WhatsApp:</b> +91XXXXXXXXXX</p>
+      <p><b>Email:</b> your@email.com</p>
+      <p><b>Telegram:</b> https://t.me/YOUR_TELEGRAM</p>
     </div>
   </div>
 </body>
