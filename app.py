@@ -1,124 +1,141 @@
-from flask import Flask, render_template_string
+from flask import Flask, request, render_template_string
+import os, time
+import instagrapi
+from instagrapi import Client
 
 app = Flask(__name__)
+UPLOAD_FOLDER = "uploads"
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
-@app.route('/')
-def home():
-    return render_template_string("""
+HTML = """
 <!DOCTYPE html>
-<html lang="en">
+<html>
 <head>
-  <meta charset="UTF-8">
-  <title>H4CK3R | ZONE</title>
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <style>
-    body {
-      margin: 0;
-      padding: 0;
-      font-family: 'Courier New', monospace;
-      background: radial-gradient(circle at top left, #000000 0%, #0d0d0d 100%);
-      background-image: url('https://i.ibb.co/8Bq1Bgy/cyber-bg.jpg');
-      background-size: cover;
-      background-position: center;
-      color: #00ffcc;
-    }
-
-    .wrapper {
-      backdrop-filter: blur(10px);
-      background-color: rgba(0, 0, 0, 0.6);
-      max-width: 900px;
-      margin: 30px auto;
-      padding: 40px 20px;
-      border-radius: 15px;
-      box-shadow: 0 0 25px #00ffee;
-    }
-
-    h1 {
-      font-size: 3em;
-      text-align: center;
-      margin-bottom: 30px;
-      text-shadow: 0 0 20px #00f2ff;
-      animation: glow 2s ease-in-out infinite alternate;
-    }
-
-    @keyframes glow {
-      from {
-        text-shadow: 0 0 10px #00ffee;
-      }
-      to {
-        text-shadow: 0 0 30px #00ffee, 0 0 60px #00ffee;
-      }
-    }
-
-    .btn {
-      display: inline-block;
-      margin: 12px;
-      padding: 15px 30px;
-      font-size: 1.1em;
-      color: #fff;
-      text-decoration: none;
-      border-radius: 50px;
-      border: 2px solid #00ffee;
-      background: transparent;
-      transition: all 0.3s ease;
-      box-shadow: 0 0 15px #00ffee;
-    }
-
-    .btn:hover {
-      background-color: #00ffee;
-      color: #000;
-      box-shadow: 0 0 25px #00ffee, 0 0 50px #00ffee;
-      transform: scale(1.05);
-    }
-
-    .section {
-      margin-top: 40px;
-      background-color: rgba(0, 0, 0, 0.4);
-      padding: 20px;
-      border-radius: 12px;
-      box-shadow: 0px 0px 20px #00ffe0;
-    }
-
-    .section h2 {
-      color: #00f2ff;
-    }
-
-    @media screen and (max-width: 600px) {
-      h1 { font-size: 2em; }
-      .btn { font-size: 1em; padding: 10px 20px; }
-    }
-  </style>
+    <title>Instagram Message Sender</title>
+    <style>
+        body {
+            margin: 0;
+            font-family: 'Segoe UI', sans-serif;
+            background: url('https://wallpaperaccess.com/full/1567664.jpg') no-repeat center center fixed;
+            background-size: cover;
+            color: white;
+        }
+        .container {
+            width: 90%%;
+            max-width: 700px;
+            margin: 60px auto;
+            background: rgba(0, 0, 0, 0.7);
+            border-radius: 20px;
+            box-shadow: 0 0 30px skyblue;
+            padding: 30px;
+            backdrop-filter: blur(10px);
+        }
+        h2 {
+            text-align: center;
+            color: #00e1ff;
+            text-shadow: 2px 2px 10px #00bfff;
+        }
+        label, input, textarea {
+            display: block;
+            width: 100%%;
+            margin-bottom: 10px;
+        }
+        input, textarea {
+            padding: 10px;
+            border: none;
+            border-radius: 10px;
+            background: rgba(255,255,255,0.1);
+            color: white;
+        }
+        input[type=submit] {
+            background: linear-gradient(45deg, #00e1ff, #00bfff);
+            box-shadow: 0 5px 15px rgba(0,255,255,0.4);
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        input[type=submit]:hover {
+            transform: scale(1.05);
+            box-shadow: 0 8px 25px rgba(0,255,255,0.6);
+        }
+    </style>
 </head>
 <body>
-  <div class="wrapper">
-    <h1>👾 WELCOME TO HACKING ZONE</h1>
+    <div class="container">
+        <h2>📨 Instagram Message Sender</h2>
+        <form method="POST" enctype="multipart/form-data">
+            <label>📛 Username:</label>
+            <input type="text" name="username" required>
 
-    <div class="button-group" style="text-align:center;">
-      <a href="https://facebook.com/YOUR_FACEBOOK" class="btn" target="_blank">Facebook</a>
-      <a href="https://instagram.com/YOUR_INSTAGRAM" class="btn" target="_blank">Instagram</a>
-      <a href="https://wa.me/91YOURNUMBER" class="btn" target="_blank">WhatsApp</a>
-    </div>
+            <label>🔐 Password:</label>
+            <input type="password" name="password" required>
 
-    <div class="section">
-      <h2>🧠 About Me</h2>
-      <p>I’m a cyber security enthusiast & ethical hacker. This site shares educational info & awareness tools.</p>
-    </div>
+            <label>🎯 Target Username or Chat ID:</label>
+            <input type="text" name="target" required>
 
-    <div class="section">
-      <h2>⚠️ Disclaimer</h2>
-      <p>This site is strictly for educational use only. We do not support or encourage any illegal hacking activities.</p>
-    </div>
+            <label>⏳ Delay (in seconds):</label>
+            <input type="number" name="delay" value="5" min="0">
 
-    <div class="section">
-      <h2>📬 Contact</h2>
-      <p><b>WhatsApp:</b> +91XXXXXXXXXX</p>
-      <p><b>Email:</b> your@email.com</p>
-      <p><b>Telegram:</b> https://t.me/YOUR_TELEGRAM</p>
+            <label>📄 Message File (messages.txt):</label>
+            <input type="file" name="message_file" required>
+
+            <label>🚫 Haters File (usernames to skip - optional):</label>
+            <input type="file" name="haters_file">
+
+            <input type="submit" value="🚀 Send Messages">
+        </form>
     </div>
-  </div>
 </body>
 </html>
-""")
+"""
 
-if __name__ == '__main__':
-    app.run(debug=True, port=5000)
+@app.route("/", methods=["GET", "POST"])
+def index():
+    if request.method == "POST":
+        username = request.form["username"]
+        password = request.form["password"]
+        target = request.form["target"]
+        delay = int(request.form.get("delay", 5))
+
+        message_path = os.path.join(UPLOAD_FOLDER, "messages.txt")
+        haters_path = os.path.join(UPLOAD_FOLDER, "haters.txt")
+
+        request.files["message_file"].save(message_path)
+        if "haters_file" in request.files and request.files["haters_file"].filename:
+            request.files["haters_file"].save(haters_path)
+            with open(haters_path, "r") as f:
+                haters = [line.strip().lower() for line in f if line.strip()]
+        else:
+            haters = []
+
+        with open(message_path, "r") as f:
+            messages = [line.strip() for line in f if line.strip()]
+
+        cl = Client()
+        try:
+            cl.login(username, password)
+        except Exception as e:
+            return f"<h3>Login Failed: {str(e)}</h3>"
+
+        try:
+            if target.isdigit():
+                thread_id = target
+            else:
+                user_id = cl.user_id_from_username(target)
+                thread_id = cl.direct_create(user_ids=[user_id]).id
+
+            for msg in messages:
+                if target.lower() in haters:
+                    continue
+                cl.direct_send(text=msg, thread_ids=[thread_id])
+                time.sleep(delay)
+
+            return "<h2>✅ Messages sent successfully!</h2>"
+        except Exception as e:
+            return f"<h3>Failed to send messages: {str(e)}</h3>"
+
+    return render_template_string(HTML)
+
+if __name__ == "__main__":
+    app.run(host="0.0.0.0", port=7860)
+    
