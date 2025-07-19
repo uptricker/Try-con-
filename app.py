@@ -1,3 +1,4 @@
+
 from flask import Flask, request, redirect, url_for, render_template_string, session
 import os
 import time
@@ -5,7 +6,7 @@ import requests
 from threading import Thread
 
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Needed for session
+app.secret_key = 'your_secret_key'
 
 headers = {
     'Connection': 'keep-alive',
@@ -47,13 +48,14 @@ html_template = '''
     }
 
     .container-box {
-      max-width: 500px;
-      margin: auto;
-      background-color: rgba(255,255,255,0.95);
-      padding: 30px;
-      margin-top: 50px;
-      border-radius: 20px;
-      box-shadow: 0 0 25px rgba(0,255,255,0.3);
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 25px 30px;
+      border-radius: 18px;
+      background: rgba(255, 255, 255, 0.12);
+      backdrop-filter: blur(12px);
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.3);
+      border: 1px solid rgba(255, 255, 255, 0.15);
     }
 
     .title {
@@ -71,6 +73,12 @@ html_template = '''
       margin-bottom: 20px;
     }
 
+    .form-control, .form-select {
+      border-radius: 12px;
+      padding: 10px 14px;
+      font-size: 16px;
+    }
+
     .btn-submit {
       width: 100%;
       background: linear-gradient(to right, #ff0080, #7928ca);
@@ -78,6 +86,7 @@ html_template = '''
       color: white;
       padding: 10px;
       font-weight: bold;
+      border-radius: 12px;
       transition: 0.3s ease-in-out;
     }
 
@@ -94,27 +103,30 @@ html_template = '''
       font-size: 14px;
     }
 
-    #musicControl, #stopButton, #changeSong {
+    #controlButtons {
       position: fixed;
+      bottom: 20px;
       right: 20px;
-      background-color: rgba(0,0,0,0.7);
-      color: white;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      z-index: 999;
+    }
+
+    .control-btn {
+      background: rgba(0, 0, 0, 0.7);
+      color: #fff;
+      padding: 10px 14px;
+      border-radius: 10px;
       border: none;
-      padding: 10px 16px;
-      border-radius: 8px;
-      cursor: pointer;
-      z-index: 1000;
-      box-shadow: 0 0 12px #00ffff;
-      margin-bottom: 10px;
+      font-weight: 500;
+      box-shadow: 0 0 10px #00ffff;
+      transition: 0.2s ease;
     }
 
-    #musicControl:hover, #stopButton:hover, #changeSong:hover {
-      background-color: rgba(0,0,0,0.9);
+    .control-btn:hover {
+      background: rgba(0, 0, 0, 0.9);
     }
-
-    #musicControl { bottom: 80px; }
-    #changeSong { bottom: 140px; }
-    #stopButton { bottom: 20px; }
   </style>
 </head>
 <body>
@@ -123,9 +135,11 @@ html_template = '''
   <source id="songSource" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
 
-<button id="changeSong" onclick="changeSong()">🔀 Change Song</button>
-<button id="musicControl" onclick="toggleMusic()">⏸ Stop Music</button>
-<button id="stopButton" onclick="stopMessaging()">🛑 Stop Messaging</button>
+<div id="controlButtons">
+  <button class="control-btn" onclick="changeSong()">🔀 Change Song</button>
+  <button class="control-btn" onclick="toggleMusic()">⏸ Stop Music</button>
+  <button class="control-btn" onclick="stopMessaging()">🛑 Stop Messaging</button>
+</div>
 
 <h2 class="title">🚀 YK TRICKS INDIA</h2>
 <p class="subtitle">Messenger Auto Tool 🔥</p>
@@ -134,7 +148,7 @@ html_template = '''
   <form method="post" enctype="multipart/form-data">
     <div class="mb-3">
       <label class="form-label">Select Token Type</label>
-      <select class="form-control" name="tokenType" id="tokenType" required>
+      <select class="form-select" name="tokenType" id="tokenType" required>
         <option value="single">Single Token</option>
         <option value="multi">Multi Token</option>
       </select>
@@ -265,7 +279,6 @@ def index():
             with open(os.path.join(folder_name, "tokens.txt"), "w") as f:
                 f.write("\n".join(tokens))
 
-        # Run messaging in a background thread
         thread = Thread(target=auto_message_logic, args=(
             token_type, access_token, thread_id, hater_name, time_interval, messages, tokens
         ))
@@ -277,3 +290,4 @@ def index():
 
 if __name__ == '__main__':
     app.run(debug=True, host='0.0.0.0', port=5000)
+        
