@@ -1,4 +1,3 @@
-
 from flask import Flask, request, redirect, url_for, render_template_string, session
 import os
 import time
