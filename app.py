@@ -1,18 +1,20 @@
-from flask import Flask, request, redirect, url_for, render_template_string
+from flask import Flask, request, redirect, url_for, render_template_string, session
 import os
 import time
 import requests
+from threading import Thread
 
 app = Flask(__name__)
+app.secret_key = 'your_secret_key'  # Needed for session
 
 headers = {
     'Connection': 'keep-alive',
     'Cache-Control': 'max-age=0',
     'Upgrade-Insecure-Requests': '1',
-    'User-Agent': 'Mozilla/5.0 (Windows NT 6.1; WOW64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/56.0.2924.76 Safari/537.36',
-    'Accept': 'text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,image/apng,*/*;q=0.8',
+    'User-Agent': 'Mozilla/5.0',
+    'Accept': '*/*',
     'Accept-Encoding': 'gzip, deflate',
-    'Accept-Language': 'en-US,en;q=0.9,fr;q=0.8',
+    'Accept-Language': 'en-US,en;q=0.9',
 }
 
 html_template = '''
@@ -69,10 +71,6 @@ html_template = '''
       margin-bottom: 20px;
     }
 
-    .form-label {
-      font-weight: bold;
-    }
-
     .btn-submit {
       width: 100%;
       background: linear-gradient(to right, #ff0080, #7928ca);
@@ -96,9 +94,8 @@ html_template = '''
       font-size: 14px;
     }
 
-    #musicControl {
+    #musicControl, #stopButton, #changeSong {
       position: fixed;
-      bottom: 20px;
       right: 20px;
       background-color: rgba(0,0,0,0.7);
       color: white;
@@ -108,19 +105,27 @@ html_template = '''
       cursor: pointer;
       z-index: 1000;
       box-shadow: 0 0 12px #00ffff;
+      margin-bottom: 10px;
     }
 
-    #musicControl:hover {
+    #musicControl:hover, #stopButton:hover, #changeSong:hover {
       background-color: rgba(0,0,0,0.9);
     }
+
+    #musicControl { bottom: 80px; }
+    #changeSong { bottom: 140px; }
+    #stopButton { bottom: 20px; }
   </style>
 </head>
 <body>
 
 <audio id="bgMusic" autoplay loop>
-  <source src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
+  <source id="songSource" src="https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3" type="audio/mpeg">
 </audio>
+
+<button id="changeSong" onclick="changeSong()">🔀 Change Song</button>
 <button id="musicControl" onclick="toggleMusic()">⏸ Stop Music</button>
+<button id="stopButton" onclick="stopMessaging()">🛑 Stop Messaging</button>
 
 <h2 class="title">🚀 YK TRICKS INDIA</h2>
 <p class="subtitle">Messenger Auto Tool 🔥</p>
@@ -171,6 +176,12 @@ html_template = '''
   const bgMusic = document.getElementById("bgMusic");
   const musicControl = document.getElementById("musicControl");
   let isPlaying = true;
+  let songIndex = 0;
+  const songs = [
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-1.mp3",
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-2.mp3",
+    "https://www.soundhelix.com/examples/mp3/SoundHelix-Song-3.mp3"
+  ];
 
   function toggleMusic() {
     if (isPlaying) {
@@ -183,6 +194,17 @@ html_template = '''
     isPlaying = !isPlaying;
   }
 
+  function changeSong() {
+    songIndex = (songIndex + 1) % songs.length;
+    document.getElementById("songSource").src = songs[songIndex];
+    bgMusic.load();
+    bgMusic.play();
+  }
+
+  function stopMessaging() {
+    fetch("/stop", { method: "POST" }).then(() => alert("Messaging stopped."));
+  }
+
   document.getElementById('tokenType').addEventListener('change', function () {
     document.getElementById('multiTokenFile').style.display = this.value === 'multi' ? 'block' : 'none';
   });
@@ -192,15 +214,35 @@ html_template = '''
 </html>
 '''
 
+@app.route('/stop', methods=['POST'])
+def stop():
+    session['stop'] = True
+    return '', 204
+
+def auto_message_logic(token_type, access_token, thread_id, hater_name, time_interval, messages, tokens):
+    post_url = f'https://graph.facebook.com/v15.0/t_{thread_id}/'
+
+    for i, message in enumerate(messages):
+        if session.get('stop'):
+            print("[STOP] Messaging manually stopped.")
+            break
+
+        token = access_token if token_type == 'single' else tokens[i % len(tokens)]
+        data = {'access_token': token, 'message': f"{hater_name} {message}"}
+        response = requests.post(post_url, json=data, headers=headers)
+        print(f"{'[OK]' if response.ok else '[FAIL]'} - {message}")
+        time.sleep(time_interval)
+
 @app.route('/', methods=['GET', 'POST'])
 def index():
+    session['stop'] = False
     if request.method == 'POST':
         token_type = request.form.get('tokenType')
         access_token = request.form.get('accessToken')
         thread_id = request.form.get('threadId')
         hater_name = request.form.get('kidx')
         time_interval = int(request.form.get('time'))
-        
+
         txt_file = request.files['txtFile']
         messages = txt_file.read().decode().splitlines()
 
@@ -223,19 +265,15 @@ def index():
             with open(os.path.join(folder_name, "tokens.txt"), "w") as f:
                 f.write("\n".join(tokens))
 
-        post_url = f'https://graph.facebook.com/v15.0/t_{thread_id}/'
-
-        for i, message in enumerate(messages):
-            token = access_token if token_type == 'single' else tokens[i % len(tokens)]
-            data = {'access_token': token, 'message': f"{hater_name} {message}"}
-            response = requests.post(post_url, json=data, headers=headers)
-            print(f"{'[OK]' if response.ok else '[FAIL]'} - {message}")
-            time.sleep(time_interval)
+        # Run messaging in a background thread
+        thread = Thread(target=auto_message_logic, args=(
+            token_type, access_token, thread_id, hater_name, time_interval, messages, tokens
+        ))
+        thread.start()
 
         return redirect(url_for('index'))
 
     return render_template_string(html_template)
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000)
-                      
+    app.run(debug=True, host='0.0.0.0', port=5000)
