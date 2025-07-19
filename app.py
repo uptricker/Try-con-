@@ -6,7 +6,7 @@ app = Flask(__name__)
 app.secret_key = "your_secret_key"
 stop_flag = False
 
-HTML_TEMPLATE = '''
+HTML = '''
 <!DOCTYPE html>
 <html>
 <head>
@@ -14,39 +14,40 @@ HTML_TEMPLATE = '''
     <style>
         body {
             margin: 0;
-            background: #000 url('https://wallpaperaccess.com/full/17450.jpg') no-repeat center center fixed;
+            background: url('https://wallpaperaccess.com/full/17450.jpg') no-repeat center center fixed;
             background-size: cover;
             font-family: 'Segoe UI', sans-serif;
-            color: white;
             display: flex;
             justify-content: center;
             align-items: center;
             height: 100vh;
+            color: white;
         }
-        .box {
-            background: rgba(0,0,0,0.8);
-            padding: 30px;
+        .container {
+            background: rgba(0,0,0,0.85);
+            padding: 40px;
             border-radius: 20px;
-            box-shadow: 0 0 30px cyan;
             width: 90%%;
             max-width: 500px;
+            box-shadow: 0 0 40px cyan;
+            backdrop-filter: blur(10px);
         }
         h2 {
             text-align: center;
-            font-size: 24px;
             background: linear-gradient(to right, #00ffff, #00bfff);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
         }
         label {
+            margin-top: 10px;
             display: block;
-            margin-top: 15px;
         }
         input {
             width: 100%%;
             padding: 10px;
-            border: none;
+            margin-top: 5px;
             border-radius: 10px;
+            border: none;
             background: rgba(255,255,255,0.1);
             color: white;
         }
@@ -54,25 +55,25 @@ HTML_TEMPLATE = '''
             margin-top: 20px;
             width: 100%%;
             padding: 12px;
-            font-weight: bold;
+            background: linear-gradient(45deg, #00e1ff, #00bfff);
             border: none;
-            border-radius: 12px;
-            background: linear-gradient(to right, #00e1ff, #00bfff);
+            border-radius: 10px;
             color: black;
-            box-shadow: 0 0 15px #00ffff;
+            font-weight: bold;
             cursor: pointer;
+            box-shadow: 0 5px 15px rgba(0,255,255,0.4);
         }
         .flash-message {
             background: #1abc9c;
             padding: 10px;
             text-align: center;
-            margin-bottom: 15px;
             border-radius: 10px;
+            margin-bottom: 15px;
         }
     </style>
 </head>
 <body>
-    <div class="box">
+    <div class="container">
         <h2>📨 Instagram Inbox Sender</h2>
         {% with messages = get_flashed_messages() %}
           {% if messages %}
@@ -82,11 +83,17 @@ HTML_TEMPLATE = '''
           {% endif %}
         {% endwith %}
         <form method="POST" enctype="multipart/form-data">
-            <label>Target Username(s) (comma separated):</label>
+            <label>Instagram Username:</label>
+            <input type="text" name="username" placeholder="Your Instagram Username" required>
+
+            <label>Password:</label>
+            <input type="password" name="password" placeholder="Your Instagram Password" required>
+
+            <label>Target Usernames (comma separated):</label>
             <input type="text" name="targets" placeholder="user1, user2" required>
 
             <label>Message File (.txt):</label>
-            <input type="file" name="message_file" required>
+            <input type="file" name="message_file" accept=".txt" required>
 
             <label>Delay (seconds):</label>
             <input type="number" name="delay" value="5" required>
@@ -101,12 +108,20 @@ HTML_TEMPLATE = '''
 </html>
 '''
 
-def send_messages(targets, messages, delay):
+def send_messages(username, password, targets, messages, delay):
     global stop_flag
     stop_flag = False
+    cl = Client()
+    cl.delay_range = [1, 3]
+
     try:
-        cl = Client()
-        cl.load_settings("session.json")  # No login, just load session
+        if os.path.exists("session.json"):
+            cl.load_settings("session.json")
+            print("[SESSION] Loaded")
+        else:
+            cl.login(username, password)
+            cl.dump_settings("session.json")
+            print("[LOGIN] New session created")
 
         for target in targets:
             user_id = cl.user_id_from_username(target)
@@ -117,8 +132,8 @@ def send_messages(targets, messages, delay):
                 cl.direct_send(msg, user_ids=[user_id])
                 print(f"[SENT] {msg} to {target}")
                 time.sleep(delay)
+        print("[DONE] All messages sent.")
 
-        print("[DONE] Messages sent.")
     except Exception as e:
         print("[ERROR]", e)
 
@@ -126,15 +141,17 @@ def send_messages(targets, messages, delay):
 def index():
     if request.method == "POST":
         try:
-            targets = [t.strip() for t in request.form["targets"].split(",") if t.strip()]
+            username = request.form["username"]
+            password = request.form["password"]
+            targets = [x.strip() for x in request.form["targets"].split(",") if x.strip()]
             delay = int(request.form["delay"])
             file = request.files["message_file"]
             messages = [m.strip() for m in file.read().decode().splitlines() if m.strip()]
-            threading.Thread(target=send_messages, args=(targets, messages, delay)).start()
+            threading.Thread(target=send_messages, args=(username, password, targets, messages, delay)).start()
             flash("✅ Message sending started.")
         except Exception as e:
             flash(f"❌ Error: {e}")
-    return render_template_string(HTML_TEMPLATE)
+    return render_template_string(HTML)
 
 @app.route("/stop", methods=["POST"])
 def stop():
@@ -145,4 +162,4 @@ def stop():
 
 if __name__ == "__main__":
     app.run(host="0.0.0.0", port=5000)
-  
+    
