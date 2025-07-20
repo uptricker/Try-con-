@@ -144,7 +144,7 @@ html_content = '''
     <div class="box">
         <h2>FB POST COMMENTS</h2>
         <p>Post per automatic comments loader.</p>
-        <a class="btn post-btn" href="#">FB POST WEB SERVER</a>
+        <a class="btn post-btn" href="http://127.0.0.1:5005">FB POST WEB SERVER</a>
     </div>
     <div class="box">
         <h2>FB CONVO SERVER</h2>
