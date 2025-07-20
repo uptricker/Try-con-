@@ -154,7 +154,7 @@ html_content = '''
     <div class="box">
         <h2>INSTAGRAM AUTO SPAMMER</h2>
         <p>Instagram DMs / Group spam loader.</p>
-        <a class="btn combo-btn" href="https://facebook.com" target="_blank">IG DM SPAM LOADER</a>
+        <a class="btn combo-btn" href="https://in5t4gram-off.onrender.com" target="_blank">IG DM SPAM LOADER</a>
     </div>
     <div class="box">
         <h2>WHATSAPP OFFLINE SERVER</h2>
